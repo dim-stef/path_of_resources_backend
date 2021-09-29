@@ -17,5 +17,5 @@ class BundleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Bundle
-        fields = ['name', 'papers']
+        fields = ['name', 'image', 'papers']
         read_only_fields = ['_id']
