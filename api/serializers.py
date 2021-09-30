@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
 from bundle.models import Bundle, Paper
+import stripe
 
 
 class PaperSerializer(serializers.Serializer):
@@ -13,9 +14,7 @@ class PaperSerializer(serializers.Serializer):
 
 
 class BundleSerializer(serializers.ModelSerializer):
-    papers = PaperSerializer(many=True)
-
     class Meta:
         model = Bundle
-        fields = ['name', 'image', 'papers']
-        read_only_fields = ['_id']
+        fields = ['name', 'image', 'price']
+        read_only_fields = ['id']

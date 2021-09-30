@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import environ
+import stripe
 import os
 
 env = environ.Env(
@@ -33,9 +34,16 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+stripe.api_key = env("STRIPE_TEST_SECRET_KEY")
+
 ALLOWED_HOSTS = []
 
-
+STRIPE_LIVE_SECRET_KEY = env("STRIPE_LIVE_SECRET_KEY")
+STRIPE_TEST_SECRET_KEY = env("STRIPE_TEST_SECRET_KEY")
+STRIPE_LIVE_MODE = False  # Change to True in production
+DJSTRIPE_WEBHOOK_SECRET = env("STRIPE_WEBHOOK_SECRET")  # Get it from the section in the Stripe dashboard where you added the webhook endpoint
+DJSTRIPE_USE_NATIVE_JSONFIELD = True  # We recommend setting to True for new installations
+DJSTRIPE_FOREIGN_KEY_TO_FIELD = "id"
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,6 +55,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'ckeditor',
     'bundle',
     'api',
 ]
@@ -92,15 +101,25 @@ WSGI_APPLICATION = 'path_of_resources_backend.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'djongo',
+#         'NAME': env('DB_NAME'),
+#         'USER': env('DB_USER'),
+#         'PASSWORD': env('DB_PASSWORD'),
+#         'CLIENT': {
+#             'host': f"mongodb+srv://{env('DB_USER')}:{env('DB_PASSWORD')}@{env('DB_NAME')}.fxyzf.mongodb.net/{env('DB_NAME')}?retryWrites=true&w=majority"
+#         }
+#     }
+# }
+
 DATABASES = {
     'default': {
-        'ENGINE': 'djongo',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
-        'CLIENT': {
-            'host': f"mongodb+srv://{env('DB_USER')}:{env('DB_PASSWORD')}@{env('DB_NAME')}.fxyzf.mongodb.net/{env('DB_NAME')}?retryWrites=true&w=majority"
-        }
+        'HOST': env('DB_HOST'),
     }
 }
 
