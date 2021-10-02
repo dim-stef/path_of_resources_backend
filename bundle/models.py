@@ -25,15 +25,15 @@ class Bundle(models.Model):
     description = RichTextField(null=True, blank=True)
     image = models.ImageField(upload_to="bundle_images", null=True, blank=True)
     price = models.IntegerField(default=0)
+    price_id = models.CharField(max_length=30, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         if not self.stripe_id:
-            product = stripe.Product.create(name=self.name,
-                                            metadata={
+            product = stripe.Product.create(metadata={
                                                 'id': self.id
                                             })
             self.stripe_id = product.id
-        else:
-            product = stripe.Product.update(self.stripe_id, name=self.name, images=[
-                                            self.image.url] if self.image else [])
+        # else:
+        #     product = stripe.Product.update(self.stripe_id, name=self.name, images=[
+                                            # self.image.url] if self.image else [])
         super(Bundle, self).save(*args, **kwargs)

@@ -9,7 +9,7 @@ router.register(r'bundles', BundleViewSet)
 urlpatterns = [
     path('v1/', include(router.urls)),
     path('v1/webhooks/stripe/', webhook, name="stripe_webhook"),
-    path('v1/create-checkout-session/', create_checkout_session, name="create-checkout-session"),
+    path('v1/create_checkout_session/', create_checkout_session, name="create-checkout-session"),
 ]
 
 #create-checkout-session

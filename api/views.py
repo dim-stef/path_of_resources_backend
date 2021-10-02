@@ -1,3 +1,4 @@
+from django.core.mail import send_mail
 from rest_framework import routers, serializers, viewsets, permissions
 from rest_framework.response import Response
 from django.http import HttpResponse, Http404
@@ -8,6 +9,7 @@ from .serializers import BundleSerializer
 import stripe
 import os
 
+
 class BundleViewSet(viewsets.ModelViewSet):
     queryset = Bundle.objects.all()
     serializer_class = BundleSerializer
@@ -16,6 +18,7 @@ class BundleViewSet(viewsets.ModelViewSet):
     #     serializer = self.serializer_class()
     #     data = serializer.data
     #     return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+
 
 @csrf_exempt
 @api_view(http_method_names=['POST'])
@@ -37,18 +40,26 @@ def create_checkout_session(request):
 
         # ?session_id={CHECKOUT_SESSION_ID} means the redirect will have the session ID set as a query param
         checkout_session = stripe.checkout.Session.create(
-            success_url=domain_url + '/success?session_id={CHECKOUT_SESSION_ID}',
-            cancel_url=domain_url + '/canceled',
+            success_url=domain_url +
+            '/?success=true?session_id={CHECKOUT_SESSION_ID}',
+            cancel_url=domain_url + '/?canceled=true',
             mode='payment',
             # automatic_tax={'enabled': True},
+            payment_method_types=[
+                'card'
+            ],
             line_items=[{
                 'price': price,
                 'quantity': quantity,
-            }]
+            }],
+            metadata={
+                'price': price
+            }
         )
         return Response({'checkout_url': checkout_session.url})
     except Exception as e:
         return Response({'error': str(e)}, status=403)
+
 
 @csrf_exempt
 @api_view(http_method_names=['POST'])
@@ -64,18 +75,36 @@ def webhook(request):
             payload, sig_header, endpoint_secret
         )
     except ValueError as e:
-        # Invalid payload
-        raise e
+        return Response({'status': 'Invalid payload'})
     except stripe.error.SignatureVerificationError as e:
-        # Invalid signature
-        raise e
+        return Response({'status': 'Invalid signature'})
 
     # Handle the event
     if event['type'] == 'price.updated':
         price = event['data']['object']
         product = Bundle.objects.get(stripe_id=price.product)
         product.price = price['unit_amount']
+        product.price_id = price['id']
         product.save()
-    # ... handle other event types
+        return Response({'status': 'Product updated'})
+    elif event['type'] == 'payment_intent.succeeded':
+        payment_intent = event['data']['object']
+        checkout_session = stripe.checkout.Session.list(
+            payment_intent=payment_intent['id'], expand=['data.line_items'])
+        for item in checkout_session['data'][0]['line_items']['data']:
+            product_id = item['price']['product']
+            bundle_bought = Bundle.objects.get(stripe_id=product_id)
+            print("safe")
+
+            send_mail(
+                'Subject here',
+                'Here is the message.',
+                'dimitrisstefanakis1@gmail.com',
+                ['jimstef@outlook.com'],
+                fail_silently=False,
+            )
+
+        return Response({'status': 'ok'})
     else:
         print('Unhandled event type {}'.format(event['type']))
+        return Response({'status': 'Unhandled event type'})
