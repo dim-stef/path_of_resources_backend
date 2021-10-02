@@ -26,7 +26,7 @@ class BundleViewSet(viewsets.ModelViewSet):
 def create_checkout_session(request):
     price = request.data['price']
     quantity = 1
-    domain_url = 'http://localhost:3000'
+    domain_url = os.environ.get('DOMAIN_URL')
 
     try:
         # Create new Checkout Session for the order
