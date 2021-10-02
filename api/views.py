@@ -94,11 +94,10 @@ def webhook(request):
         for item in checkout_session['data'][0]['line_items']['data']:
             product_id = item['price']['product']
             bundle_bought = Bundle.objects.get(stripe_id=product_id)
-            print("safe")
 
             send_mail(
-                'Subject here',
-                'Here is the message.',
+                'Path of resources order',
+                f"Thanks for shopping! Here is your link {bundle_bought.airtable_url}",
                 'dimitrisstefanakis1@gmail.com',
                 ['jimstef@outlook.com'],
                 fail_silently=False,

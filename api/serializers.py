@@ -16,5 +16,5 @@ class PaperSerializer(serializers.Serializer):
 class BundleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bundle
-        fields = ['name', 'image', 'price', 'price_id']
+        fields = ['name', 'description', 'airtable_url', 'image', 'price', 'price_id']
         read_only_fields = ['id']
