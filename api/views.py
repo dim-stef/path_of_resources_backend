@@ -89,6 +89,8 @@ def webhook(request):
         return Response({'status': 'Product updated'})
     elif event['type'] == 'payment_intent.succeeded':
         payment_intent = event['data']['object']
+        customer_id = payment_intent['customer']
+        customer = stripe.Customer.retrieve(customer_id)
         checkout_session = stripe.checkout.Session.list(
             payment_intent=payment_intent['id'], expand=['data.line_items'])
         for item in checkout_session['data'][0]['line_items']['data']:
@@ -99,7 +101,7 @@ def webhook(request):
                 'Path of resources order',
                 f"Thanks for shopping! Here is your link {bundle_bought.airtable_url}",
                 'dimitrisstefanakis1@gmail.com',
-                ['jimstef@outlook.com'],
+                [customer['email']],
                 fail_silently=False,
             )
 
