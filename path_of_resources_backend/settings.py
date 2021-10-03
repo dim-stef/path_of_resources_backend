@@ -35,7 +35,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-stripe.api_key = env("STRIPE_TEST_SECRET_KEY") if env("DEBUG_MODE") else env("STRIPE_LIVE_SECRET_KEY")
+stripe.api_key = os.environ.get("STRIPE_TEST_SECRET_KEY") if os.environ.get("DEBUG_MODE") else os.environ.get("STRIPE_LIVE_SECRET_KEY")
 
 ALLOWED_HOSTS = []
 
