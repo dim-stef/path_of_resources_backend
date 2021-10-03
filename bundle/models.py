@@ -29,11 +29,11 @@ class Bundle(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.stripe_id:
-            product = stripe.Product.create(metadata={
-                                                'id': self.id
-                                            })
+            product = stripe.Product.create(name=self.name, metadata={
+                'id': self.id
+            })
             self.stripe_id = product.id
         # else:
         #     product = stripe.Product.update(self.stripe_id, name=self.name, images=[
-                                            # self.image.url] if self.image else [])
+            # self.image.url] if self.image else [])
         super(Bundle, self).save(*args, **kwargs)
