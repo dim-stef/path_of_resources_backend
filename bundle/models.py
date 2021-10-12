@@ -27,6 +27,9 @@ class Bundle(models.Model):
     price = models.IntegerField(default=0)
     price_id = models.CharField(max_length=30, null=True, blank=True)
 
+    def __str__(self):
+        return self.name
+
     def save(self, *args, **kwargs):
         if not self.stripe_id:
             product = stripe.Product.create(name=self.name, metadata={
