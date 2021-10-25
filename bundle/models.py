@@ -1,9 +1,24 @@
 from django import forms
 from django.db import models
+from django.utils.text import slugify
 from ckeditor.fields import RichTextField
 import stripe
+import uuid
 
 # Create your models here.
+
+class BundleType(models.Model):
+    surrogate = models.UUIDField(default=uuid.uuid4, db_index=True, unique=True)
+    name = models.CharField(max_length=100, default="")
+    slug = models.CharField(max_length=120, default="")
+    image = models.ImageField(upload_to="bundle_type_images", null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+        super(BundleType, self).save(*args, **kwargs)
 
 
 class Paper(models.Model):
@@ -19,8 +34,11 @@ class Paper(models.Model):
 
 
 class Bundle(models.Model):
+    surrogate = models.UUIDField(default=uuid.uuid4, db_index=True, unique=True)
+    bundle_type = models.ForeignKey(BundleType, on_delete=models.CASCADE, null=True, blank=True, related_name="bundles")
     stripe_id = models.CharField(max_length=30, null=True, blank=True)
     name = models.CharField(max_length=100)
+    slug = models.CharField(max_length=120, default="")
     airtable_url = models.URLField(null=True, blank=True)
     description = RichTextField(null=True, blank=True)
     image = models.ImageField(upload_to="bundle_images", null=True, blank=True)
@@ -31,6 +49,7 @@ class Bundle(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
         if not self.stripe_id:
             product = stripe.Product.create(name=self.name, metadata={
                 'id': self.id

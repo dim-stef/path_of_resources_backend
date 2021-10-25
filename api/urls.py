@@ -1,10 +1,11 @@
 from django.urls import path, include
 from django.contrib.auth.models import User
 from rest_framework import routers, serializers, viewsets
-from .views import BundleViewSet, webhook, create_checkout_session
+from .views import BundleViewSet, BundleTypeViewSet, webhook, create_checkout_session
 
 router = routers.DefaultRouter()
 router.register(r'bundles', BundleViewSet)
+router.register(r'bundle_types', BundleTypeViewSet)
 
 urlpatterns = [
     path('v1/', include(router.urls)),

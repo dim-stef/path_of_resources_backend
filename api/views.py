@@ -3,21 +3,33 @@ from rest_framework import routers, serializers, viewsets, permissions
 from rest_framework.response import Response
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
+from django_filters import rest_framework as filters
 from rest_framework.decorators import api_view, permission_classes
-from bundle.models import Bundle, Paper
-from .serializers import BundleSerializer
+from bundle.models import Bundle, BundleType, Paper
+from .serializers import BundleSerializer, BundleTypeSerializer
 import stripe
 import os
+
+
+class BundleFilterSet(filters.FilterSet):
+    name = filters.CharFilter(field_name="name", lookup_expr="icontains")
+    slug = filters.CharFilter(field_name="slug", lookup_expr="iexact")
+    bundle_type = filters.CharFilter(field_name="bundle_type__slug", lookup_expr="iexact")
+
+    class Meta:
+        model = Bundle
+        fields = ['name', 'slug', 'bundle_type']
 
 
 class BundleViewSet(viewsets.ModelViewSet):
     queryset = Bundle.objects.all()
     serializer_class = BundleSerializer
+    filterset_class = BundleFilterSet
 
-    # def create(self, request):
-    #     serializer = self.serializer_class()
-    #     data = serializer.data
-    #     return Response(serializer.validated_data, status=status.HTTP_201_CREATED)
+
+class BundleTypeViewSet(viewsets.ModelViewSet):
+    queryset = BundleType.objects.all()
+    serializer_class = BundleTypeSerializer
 
 
 @csrf_exempt
