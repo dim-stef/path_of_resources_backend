@@ -9,6 +9,8 @@ import uuid
 
 class BundleType(models.Model):
     surrogate = models.UUIDField(default=uuid.uuid4, db_index=True, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
     name = models.CharField(max_length=100, default="")
     slug = models.CharField(max_length=120, default="")
     image = models.ImageField(upload_to="bundle_type_images", null=True, blank=True)
@@ -35,6 +37,8 @@ class Paper(models.Model):
 
 class Bundle(models.Model):
     surrogate = models.UUIDField(default=uuid.uuid4, db_index=True, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True)
     bundle_type = models.ForeignKey(BundleType, on_delete=models.CASCADE, null=True, blank=True, related_name="bundles")
     stripe_id = models.CharField(max_length=30, null=True, blank=True)
     name = models.CharField(max_length=100)
