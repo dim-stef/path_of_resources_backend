@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from django.http import HttpResponse, Http404
 from django.views.decorators.csrf import csrf_exempt
 from django_filters import rest_framework as filters
+from rest_framework.filters import OrderingFilter
 from rest_framework.decorators import api_view, permission_classes
 from bundle.models import Bundle, BundleType, Paper
 from .serializers import BundleSerializer, BundleTypeSerializer
@@ -25,14 +26,14 @@ class BundleViewSet(viewsets.ModelViewSet):
     queryset = Bundle.objects.all()
     serializer_class = BundleSerializer
     filterset_class = BundleFilterSet
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [OrderingFilter]
     ordering_fields = ['updated_at']
 
 
 class BundleTypeViewSet(viewsets.ModelViewSet):
     queryset = BundleType.objects.all()
     serializer_class = BundleTypeSerializer
-    filter_backends = [filters.OrderingFilter]
+    filter_backends = [OrderingFilter]
     ordering_fields = ['updated_at']
 
 
