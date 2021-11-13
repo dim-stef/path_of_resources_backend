@@ -16,8 +16,8 @@ class PaperSerializer(serializers.Serializer):
 class BundleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Bundle
-        fields = ['name', 'slug', 'description', 'image', 'price', 'price_id']
-        read_only_fields = ['id']
+        fields = ['name', 'slug', 'description', 'image', 'price', 'price_id', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
 
 
 class BundleTypeSerializer(serializers.ModelSerializer):
@@ -28,4 +28,5 @@ class BundleTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BundleType
-        fields = ['name', 'slug', 'image', 'number_of_bundles']
+        fields = ['name', 'slug', 'image', 'number_of_bundles', 'created_at', 'updated_at']
+        read_only_fields = ['created_at', 'updated_at']

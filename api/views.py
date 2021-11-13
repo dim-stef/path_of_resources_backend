@@ -25,11 +25,15 @@ class BundleViewSet(viewsets.ModelViewSet):
     queryset = Bundle.objects.all()
     serializer_class = BundleSerializer
     filterset_class = BundleFilterSet
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['updated_at']
 
 
 class BundleTypeViewSet(viewsets.ModelViewSet):
     queryset = BundleType.objects.all()
     serializer_class = BundleTypeSerializer
+    filter_backends = [filters.OrderingFilter]
+    ordering_fields = ['updated_at']
 
 
 @csrf_exempt
