@@ -8,6 +8,9 @@ import uuid
 # Create your models here.
 
 class BundleType(models.Model):
+    class Meta:
+        ordering = ['-updated_at',]
+
     surrogate = models.UUIDField(default=uuid.uuid4, db_index=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
@@ -36,6 +39,9 @@ class Paper(models.Model):
 
 
 class Bundle(models.Model):
+    class Meta:
+        ordering = ['-updated_at',]
+
     surrogate = models.UUIDField(default=uuid.uuid4, db_index=True, unique=True)
     created_at = models.DateTimeField(auto_now_add=True, null=True)
     updated_at = models.DateTimeField(auto_now=True, null=True)
