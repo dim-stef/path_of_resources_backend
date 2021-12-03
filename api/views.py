@@ -113,7 +113,7 @@ def webhook(request):
             send_mail(
                 'Path of resources order',
                 f"Your Path of Resources order is here!" + '\n\n'
-                f"Thanks for shopping, Here is your bundle! {bundle_bought.airtable_url}" + '\n\n'
+                f"Thanks for shopping, here is your bundle! {bundle_bought.airtable_url}" + '\n\n'
                 "If you think that something is missing, have any questions or any feedback feel free to reply directly to this email.",
                 'dimitrisstefanakis1@gmail.com',
                 [customer['email']],
